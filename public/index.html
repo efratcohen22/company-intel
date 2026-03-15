@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recruitment Intel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F4F3EF;
+  --white: #ffffff;
+  --black: #111111;
+  --gray: #888888;
+  --light: #E8E6E0;
+  --green: #1a7a4a;
+  --green-bg: #e8f5ee;
+  --blue: #1a3a7a;
+  --blue-bg: #e8eef5;
+  --purple: #4a1a7a;
+  --purple-bg: #f0e8f5;
+  --orange: #7a3a1a;
+  --orange-bg: #f5ece8;
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--black);
+  min-height: 100vh;
+  padding: 32px 20px;
+}
+
+.wrap { max-width: 960px; margin: 0 auto; }
+
+/* Header */
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+.header span { font-size: 13px; color: var(--gray); }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--light);
+  border-radius: 10px;
+  padding: 4px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+.tab {
+  flex: 1;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--gray);
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+.tab.active {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Panels */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Input row */
+.input-row {
+  display: flex;
+  gap: 10px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.input-row input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--black);
+  background: transparent;
+  min-width: 0;
+}
+.input-row input::placeholder { color: #bbb; }
+
+.btn {
+  background: var(--black);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn:hover { opacity: 0.82; }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* CV textarea */
+.cv-wrap {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--black);
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 180px;
+  background: transparent;
+}
+textarea::placeholder { color: #bbb; }
+
+.cv-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* Status */
+.status {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 13px;
+  background: var(--white);
+  color: var(--gray);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.status.visible { display: flex; }
+.status.error { background: #fff5f5; color: #cc3333; }
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid #ddd;
+  border-top-color: var(--black);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Cards grid */
+.cards {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+.cards.visible { display: grid; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Card */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.card.wide { grid-column: 1 / -1; }
+
+.card-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 10px;
+}
+.card-main { font-size: 15px; font-weight: 600; color: var(--black); margin-bottom: 4px; }
+.card-sub  { font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag.green  { background: var(--green-bg);  color: var(--green); }
+.tag.blue   { background: var(--blue-bg);   color: var(--blue); }
+.tag.purple { background: var(--purple-bg); color: var(--purple); }
+.tag.orange { background: var(--orange-bg); color: var(--orange); }
+.tag.dark   { background: var(--light);     color: var(--black); }
+
+/* Source badge */
+.source-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.source-badge.db { background: var(--green-bg); color: var(--green); }
+.source-badge.ai { background: var(--blue-bg);  color: var(--blue); }
+
+/* Employment badge */
+.employment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+/* Company tags grid */
+.company-tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+.company-tags-grid .card {
+  box-shadow: none;
+  border: 1px solid var(--light);
+  padding: 12px 14px;
+}
+.company-tags-grid .card-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--black);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 8px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  body { padding: 20px 14px; }
+  .header h1 { font-size: 20px; }
+  .cards { grid-template-columns: 1fr; }
+  .card.wide { grid-column: 1; }
+  .company-tags-grid { grid-template-columns: 1fr 1fr; }
+  .tab { font-size: 12px; padding: 8px 10px; }
+  textarea { min-height: 140px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>Recruitment Intel</h1>
+    <span>Company & CV Analysis</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('company')">Company Search</button>
+    <button class="tab" onclick="switchTab('cv')">CV Analysis</button>
+  </div>
+
+  <!-- Company Panel -->
+  <div class="panel active" id="panel-company">
+    <div class="input-row">
+      <input type="text" id="companyInput" placeholder="Company name (e.g. Wix, Monday, Gong...)" />
+      <button class="btn" id="companyBtn" onclick="analyzeCompany()">Analyze</button>
+    </div>
+    <div class="status" id="company-status"></div>
+    <div class="cards" id="company-cards"></div>
+  </div>
+
+  <!-- CV Panel -->
+  <div class="panel" id="panel-cv">
+    <div class="cv-wrap">
+      <textarea id="cvInput" placeholder="Paste CV / resume text here...&#10;&#10;Include company names, job titles, and descriptions for best results."></textarea>
+    </div>
+    <div class="cv-actions">
+      <button class="btn" id="cvBtn" onclick="analyzeCV()">Analyze CV</button>
+    </div>
+    <div class="status" id="cv-status"></div>
+    <div class="cards" id="cv-cards"></div>
+  </div>
+
+</div>
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['company','cv'][i] === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function setStatus(id, msg, isError) {
+  const el = document.getElementById(id);
+  el.className = 'status visible' + (isError ? ' error' : '');
+  el.innerHTML = isError ? msg : `<div class="spinner"></div><span>${msg}</span>`;
+}
+function clearStatus(id) { document.getElementById(id).className = 'status'; }
+
+function makeTags(items, cls) {
+  return (items||[]).map(t => `<span class="tag ${cls}">${t}</span>`).join('');
+}
+function card(label, content, wide) {
+  return `<div class="card${wide?' wide':''}"><div class="card-label">${label}</div>${content}</div>`;
+}
+
+// ── Company Analysis ──
+async function analyzeCompany() {
+  const company = document.getElementById('companyInput').value.trim();
+  if (!company) return;
+  document.getElementById('companyBtn').disabled = true;
+  document.getElementById('company-cards').className = 'cards';
+  setStatus('company-status', 'Analyzing company...');
+  try {
+    const resp = await fetch('/api/analyze', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ company }) });
+    if (!resp.ok) throw new Error((await resp.json()).error);
+    const r = await resp.json();
+    const fromDB = r.source === 'database';
+    const html = [
+      card('Company', `
+        <div class="source-badge ${fromDB?'db':'ai'}">${fromDB?'From Database':'AI Search'}</div>
+        <div class="card-main">${company}</div>
+        <div class="card-sub">${r.description||''}</div>
+      `),
+      card('Industries', `<div class="tags">${makeTags(r.industries,'green')}</div>`),
+      card('Business Model', `<div class="tags">${makeTags((r.business_models||[]).map(b=>b.toUpperCase()),'blue')}</div>`),
+      card('Platform', `<div class="tags">${makeTags((r.platforms||[]).map(p=>({web:'Web',app:'App',complex:'Complex'}[p]||p)),'purple')}</div>`),
+      card('Best Role', `<div class="tags">${makeTags([r.role],'dark')}</div>`),
+    ].join('');
+    document.getElementById('company-cards').innerHTML = html;
+    document.getElementById('company-cards').className = 'cards visible';
+    clearStatus('company-status');
+  } catch(e) {
+    setStatus('company-status', 'Error: ' + e.message, true);
+  } finally {
+    document.getElementById('companyBtn').disabled = false;
+  }
+}
+
+// ── CV Analysis ──
+async function analyzeCV() {
+  const cv = document.getElementById('cvInput').value.trim();
+  if (!cv) return;
+  document.getElementById('cvBtn').disabled = true;
+  document.getElementById('cv-cards').className = 'cards';
+  setStatus('cv-status', 'Analyzing CV...');
+  try {
+    const resp = await fetch('/api/cv', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cv }) });
+    if (!resp.ok) throw new Error((await resp.json()).error);
+    const r = await resp.json();
+    const platMap = { web:'Web', app:'App', complex:'Complex' };
+
+    const companyTagCards = Object.entries(r.company_tags || {}).map(([company, tags]) =>
+      card(company, `<div class="tags">${makeTags(tags,'green')}</div>`)
+    ).join('');
+
+    const html = [
+      card('Current Position', `<div class="card-main">${r.current_title||'—'}</div><div class="card-sub">${r.current_company||''}</div>`),
+      r.employment_type ? card('Employment Type', `<div class="employment-badge">${r.employment_type}</div>`) : '',
+      card('Role Classification', `<div class="tags">${makeTags(r.roles,'dark')}</div>`),
+      card('Platform Types', `<div class="tags">${makeTags((r.platforms||[]).map(p=>platMap[p]||p),'purple')}</div>`),
+      card('Business Models', `<div class="tags">${makeTags((r.business_models||[]).map(b=>b.toUpperCase()),'blue')}</div>`),
+      (r.ai_tools&&r.ai_tools.length) ? card('AI Tools', `<div class="tags">${makeTags(r.ai_tools,'orange')}</div>`) : '',
+      card('Data Tools', `<div class="tags">${makeTags(r.data_tools&&r.data_tools.length?r.data_tools:['None'], r.data_tools&&r.data_tools[0]!=='None'?'orange':'dark')}</div>`),
+      companyTagCards ? `<div class="card wide"><div class="card-label">Companies & Tags</div><div class="company-tags-grid">${companyTagCards}</div></div>` : '',
+    ].filter(Boolean).join('');
+
+    document.getElementById('cv-cards').innerHTML = html;
+    document.getElementById('cv-cards').className = 'cards visible';
+    clearStatus('cv-status');
+  } catch(e) {
+    setStatus('cv-status', 'Error: ' + e.message, true);
+  } finally {
+    document.getElementById('cvBtn').disabled = false;
+  }
+}
+
+document.getElementById('companyInput').addEventListener('keydown', e => { if (e.key==='Enter') analyzeCompany(); });
+</script>
+</body>
+</html>
