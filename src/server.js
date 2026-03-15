@@ -19,7 +19,24 @@ const ALLOWED_TAGS = ["3D","Accessibility","Adtech","Agriculture","Automations",
 
 const ROLES = ["Account Manager","Accountant","Animator","Art Director","BizDev","Bookeeper","Brand Design Team Lead","Brand Designer","Brand Manager","CDO","CEO","Cloud Sales Engineer","CMO","Community Manager","Community Manger","Content Writer","Copywriter","Creative Director","Creative Manager","Curator","Customer Success Manager","Data Analyst","Data Product Manager","Demand Generation","Design Director","Design OPS","Design System Expert","Digital Manager","Director of Product","Product Design - Director","Drafter","Event Manager","Exhibition Designer","Finance Manager","Fullstack Designer","Graphic Designer","Growth Senior Product Manager","Head of Design","Head of Growth","Head of Product","Product Design - Head of","Head of UX","HR","Product Design - IC","Illustrator","Industrial Designer","Interior Designer","Lawyer","Product Design - Lead","Licensed Architect","Marketing Designer","Marketing Design Manager","Marketing Director","Marketing Manager","Motion Designer","Not Licensed Architect","Office Manager","Operation Manager","Packaging Designer","Performance Marketing Designer","PPC manager","Product Design - Principal","Principal Product Manager","Producer","Product Design - Team Lead","Product Design","Product Management Lead","Product Manager","Product Manager & Designer","Product Marketing","Product Marketing Lead","Project Manager","R&D","SDR","Senior Account Manager","Senior Accountant","Product Design - Senior","Senior Product Manager","SEO","Social Media Manager","Solutions Architect","Studio Manager","Talent Acquisition Specialist","Technical Content Writer","Product Design - Technical","Technical Product Manager","UI Designer","UI Team Lead","UX Architect","UX Designer","UX Researcher","UX UI Designer","UX Writer","Video Editor","Visual Designer","VP Design","VP Marketing","VP Product","Web Designer","User Acquisition Team Lead","Head of User Acquisition","Marketing Specialist","Marketing Operations","VP Product & Design","Product Design - AI","AI Product Manager","Growth Marketing Manager","Information specialist","Senior Motion Designer","Senior Marketing Designer","Personal Assistant","Fashion Designer","Game Designer"];
 
-// ── Proper CSV parser — handles quoted fields with commas inside ──
+// ── Basic Auth ──
+const AUTH_USER = process.env.AUTH_USER || 'recruitment';
+const AUTH_PASS = process.env.AUTH_PASS || 'intel2024';
+
+app.use((req, res, next) => {
+  if (req.path === '/api/health') return next(); // skip health check
+  const auth = req.headers['authorization'];
+  if (!auth || !auth.startsWith('Basic ')) {
+    res.set('WWW-Authenticate', 'Basic realm="Recruitment Intel"');
+    return res.status(401).send('Authentication required');
+  }
+  const [user, pass] = Buffer.from(auth.slice(6), 'base64').toString().split(':');
+  if (user === AUTH_USER && pass === AUTH_PASS) return next();
+  res.set('WWW-Authenticate', 'Basic realm="Recruitment Intel"');
+  return res.status(401).send('Invalid credentials');
+});
+
+
 function parseCSV(text) {
   return text.split('\n').map(line => {
     const cells = [];
